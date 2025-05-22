@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freepbx
+  namespace: asterisk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freepbx
+  template:
+    metadata:
+      labels:
+        app: freepbx
+    spec:
+      containers:
+      - name: freepbx
+        image: tiredofit/freepbx:latest
+        ports:
+        - containerPort: 80    # Web UI
+        - containerPort: 5060  # SIP UDP
+        - containerPort: 5061  # SIP TLS
+        - containerPort: 18000 # RTP Start
+        - containerPort: 20000 # RTP End
+        volumeMounts:
+        - name: freepbx-data
+          mountPath: /data
+      volumes:
+      - name: freepbx-data
+        persistentVolumeClaim:
+          claimName: freepbx-data
